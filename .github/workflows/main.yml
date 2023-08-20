@@ -16,7 +16,8 @@ jobs:
       - name: Set up Java
         uses: actions/setup-java@v2
         with:
-          java-version: '11' # You can change this to your desired Java version
+          java-version: '11'
+          distribution: 'adopt'
 
       - name: Build Maven Project
         run: mvn clean install
@@ -68,4 +69,3 @@ jobs:
       - name: Deploy to AWS EKS
         run: |
           # Replace this with your AWS EKS deployment commands
-
