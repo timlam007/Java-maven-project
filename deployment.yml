@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/name: java-demo
+    app.kubernetes.io/instance: java-demo-instance
+    app.kubernetes.io/version: '1.0.0'
+    app.kubernetes.io/managed-by: kubectl
+  name: java-demo-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: java-demo
+  template:
+    metadata:
+      labels:
+        app: cicd-demo
+    spec:
+      containers:
+        - image: public.ecr.aws/e5z6p2m5/java-app:latest
+          imagePullPolicy: Always
+          name: java-app
+          ports:
+            - containerPort: 8080
