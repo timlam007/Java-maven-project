@@ -1,7 +1,6 @@
 # Java-maven-project
 # cd java-maven-project
 #mvn clean install
-For run in the docker run these commands 
 
 #To build our Docker image using the Dockerfile, run:
 #docker build -t my-maven-docker-project.jar .
