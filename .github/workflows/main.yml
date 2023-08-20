@@ -47,9 +47,11 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: Run Trivy Security Scan
+      - name: Scan Security Vulnerabilities
         run: |
-            docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy ${{ secrets.DOCKER_IMAGE_NAME }}
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy --exit-code 1 --severity HIGH,CRITICAL ${{ secrets.DOCKER_IMAGE_NAME }}
+        continue-on-error: true
+
   deploy-to-aws-eks:
     runs-on: ubuntu-latest
     needs: scan-security-vulnerabilities
