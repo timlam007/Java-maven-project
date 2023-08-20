@@ -49,7 +49,7 @@ jobs:
 
       - name: Run Trivy Security Scan
         run: |
-          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy ${{ secrets.DOCKER_IMAGE_NAME }}
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy java-app
 
   deploy-to-aws-eks:
     runs-on: ubuntu-latest
