@@ -49,7 +49,12 @@ jobs:
 
       - name: Scan Security Vulnerabilities
         run: |
-          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy --exit-code 1 --severity HIGH,CRITICAL ${{ secrets.DOCKER_IMAGE_NAME }}
-        continue-on-error: true
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy --severity HIGH,CRITICAL ${{ secrets.DOCKER_IMAGE_NAME }}
+          if [ $? -eq 0 ]; then
+            echo "No HIGH or CRITICAL vulnerabilities found."
+          else
+            echo "HIGH or CRITICAL vulnerabilities found."
+            exit 1
+          fi
 
  
