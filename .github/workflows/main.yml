@@ -49,16 +49,17 @@ jobs:
       - name: Scan Security Vulnerabilities
         id: scan
         run: |
-          SCAN_RESULT=$(docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy --format json -o /tmp/report.json ${{ secrets.DOCKER_IMAGE_NAME }})
+          SCAN_RESULT=$(docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy --format template --template '{{range .Vulnerabilities}}{{if or (eq .Severity "HIGH") (eq .Severity "CRITICAL")}}{{.Name}} ({{.Severity}}){{"\n"}}{{end}}{{end}}' ${{ secrets.DOCKER_IMAGE_NAME }})
           echo "$SCAN_RESULT"
 
       - name: Check for HIGH or CRITICAL Vulnerabilities
         run: |
-          CRITICAL_HIGH_COUNT=$(jq '.[].Vulnerabilities | map(select(.Severity | contains("CRITICAL") or contains("HIGH"))) | length' /tmp/report.json)
-          if [ "$CRITICAL_HIGH_COUNT" -gt 0 ]; then
+          if [ -n "$SCAN_RESULT" ]; then
             echo "Found HIGH or CRITICAL vulnerabilities."
             exit 1
           else
             echo "No HIGH or CRITICAL vulnerabilities found."
           fi
+
+  
  
