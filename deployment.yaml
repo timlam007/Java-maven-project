@@ -2,20 +2,20 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app.kubernetes.io/name: java-demo
-    app.kubernetes.io/instance: java-demo-instance
+    app.kubernetes.io/name: demo
+    app.kubernetes.io/instance: demo
     app.kubernetes.io/version: '1.0.0'
     app.kubernetes.io/managed-by: kubectl
-  name: java-demo-deployment
+  name: demo
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: java-demo
+      app: demo
   template:
     metadata:
       labels:
-        app: cicd-demo
+        app: demo
     spec:
       containers:
         - image: public.ecr.aws/e5z6p2m5/java-app:latest
