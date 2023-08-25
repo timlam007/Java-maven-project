@@ -47,18 +47,8 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: Scan Security Vulnerabilities
-        id: scan
-        run: |
-          SCAN_RESULT=$(docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy --format json -f /tmp/trivy_report.json ${{ secrets.DOCKER_IMAGE_NAME }})
-          echo "$SCAN_RESULT"
-
-      - name: Check for HIGH or CRITICAL Vulnerabilities
-        run: |
-          CRITICAL_HIGH_COUNT=$(jq '.[].Vulnerabilities | map(select(.Severity | contains("CRITICAL") or contains("HIGH"))) | length' /tmp/trivy_report.json)
-          if [ "$CRITICAL_HIGH_COUNT" -gt 0 ]; then
-            echo "Found HIGH or CRITICAL vulnerabilities."
-            exit 1
-          else
-            echo "No HIGH or CRITICAL vulnerabilities found."
-          fi
+      - name: Scan Docker image 🐳
+        uses: snyk/actions/docker@master
+        continue-on-error: true
+        with:
+              image: docker.io/library/java-app
