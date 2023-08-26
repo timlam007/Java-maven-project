@@ -1,6 +1,7 @@
-Simple HTTP Server
+< Simple HTTP Server >
 Overview
-This is a simple HTTP server application built using Java. The application uses the com.sun.net.httpserver package to create a basic HTTP server that listens on port 8080 and responds to all requests with a "Hello World" HTML message.
+This is a simple HTTP server application built using Java. 
+The application uses the com.sun.net.httpserver package to create a basic HTTP server that listens on port 8080 and responds to all requests with a "Hello World" HTML message.
 
 Requirements
 Java JDK 1.8 or higher
