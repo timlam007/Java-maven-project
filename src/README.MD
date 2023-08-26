@@ -1,6 +1,8 @@
 
-:-- Simple HTTP Server
-:-- Overview
+<p align="left">Simple HTTP Server</p>
+<p align="left">Overview</p>
+
+
 This is a simple HTTP server application built using Java. 
 The application uses the com.sun.net.httpserver package to create a basic HTTP server that listens on port 8080 and responds to all requests with a "Hello World" HTML message.
 
