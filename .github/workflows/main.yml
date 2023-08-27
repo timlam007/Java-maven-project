@@ -36,9 +36,7 @@ jobs:
           sudo apt-get -y install podman
 
       - name: Build Podman Image
-        run: |
-          # Build your Podman image here
-          podman build -t java-app .
+        run: podman build -t java-app .
 
   scan-security-vulnerabilities:
     runs-on: ubuntu-latest
