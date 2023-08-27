@@ -31,13 +31,16 @@ jobs:
 
     steps:
       - name: Set up Podman
-        run: |
-          # Install Podman
-          sudo dnf -y install podman
-          podman login -u ${{ secrets.RH_REGISTRY_USERNAME }} -p ${{ secrets.RH_REGISTRY_PASSWORD }} registry.redhat.io
-          # Run your Podman commands here
-          # For example, to build your Podman image:
-          podman build -t java-app .
+        uses: containers/podman-action@v2
+        with:
+          command: 'login'
+          args: >
+            -u ${{ secrets.RH_REGISTRY_USERNAME }}
+            -p ${{ secrets.RH_REGISTRY_PASSWORD }}
+            registry.redhat.io
+
+      - name: Build Podman Image
+        run: podman build -t java-app .
 
   scan-security-vulnerabilities:
     runs-on: ubuntu-latest
@@ -52,8 +55,8 @@ jobs:
         continue-on-error: true
         with:
           image: java-app
-          
-  Deploy-image:
+
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -70,8 +73,10 @@ jobs:
 
           # Set up OpenShift CLI (oc)
           # You might need to install oc or set up your environment accordingly
+          # Set OC_CLI environment variable to the path of the oc executable
 
           # Deploy the Podman image directly to OpenShift
-          oc new-build --name=java-app --image-stream=ubi8/ubi --binary
-          oc start-build java-app --from-dir=. --follow
-          oc new-app java-app
+          $OC_CLI login --token=$YOUR_OPENSHIFT_TOKEN --server=$YOUR_OPENSHIFT_SERVER
+          $OC_CLI new-build --name=java-app --image-stream=ubi8/ubi --binary
+          $OC_CLI start-build java-app --from-dir=. --follow
+          $OC_CLI new-app java-app
