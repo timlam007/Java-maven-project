@@ -70,7 +70,7 @@ jobs:
           # Build the Docker image with the multi-stage Dockerfile
           docker build -t java-app .
           # Set up OpenShift CLI
-          oc login --token=$YOUR_OPENSHIFT_TOKEN --server=$YOUR_OPENSHIFT_SERVER
+          oc login --token=sha256~EwJCLivWCr3oVkXMxj1vs3sfb7P4A_CYIunYxNHFSyY --server=https://api.sandbox-m2.ll9k.p1.openshiftapps.com:6443
           # Deploy the Podman image directly to OpenShift
           oc new-build --name=java-app --image-stream=ubi8/ubi --binary
           oc start-build java-app --from-dir=. --follow
