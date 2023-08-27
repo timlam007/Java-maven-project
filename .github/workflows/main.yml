@@ -38,7 +38,7 @@ jobs:
       - name: Prepare Dockerfile
         run: |
           # Ensure the Dockerfile is in the correct location
-          cp Java-maven-project/Dockerfile .  # Replace "path/to/your/Dockerfile" with the actual path
+          cd Java-maven-project
 
       - name: Build Podman Image
         run: |
