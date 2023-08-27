@@ -30,17 +30,15 @@ jobs:
     needs: build
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
+      - name: Set up Podman
+        run: |
+          # Install Podman
+          sudo dnf -y install podman
+          podman login -u ${{ secrets.RH_REGISTRY_USERNAME }} -p ${{ secrets.RH_REGISTRY_PASSWORD }} registry.redhat.io
+          # Run your Podman commands here
+          # For example, to build your Podman image:
+          podman build -t java-app .
 
-      - name: Set up Docker
-        uses: docker/setup-buildx-action@v1
-
-      - name: Login to Red Hat Registry
-        run: docker login -u ${{ secrets.RH_REGISTRY_USERNAME }} -p ${{ secrets.RH_REGISTRY_PASSWORD }} registry.redhat.io
-
-      - name: Build Docker Image
-        run: docker build -t java-app .
 
   scan-security-vulnerabilities:
    runs-on: ubuntu-latest
@@ -64,8 +62,10 @@ jobs:
 
       - name: Build and Deploy
         run: |
-          # Build the Docker image with the multi-stage Dockerfile
-          docker build -t java-app .
+          #login to redhat
+          podman login -u ${{ secrets.RH_REGISTRY_USERNAME }} -p ${{ secrets.RH_REGISTRY_PASSWORD }} registry.redhat.io
+          # Build the podman image with the multi-stage Dockerfile
+          podman build -t java-app .
 
           # Set up OpenShift CLI
           oc login --token=$YOUR_OPENSHIFT_TOKEN --server=$YOUR_OPENSHIFT_SERVER
