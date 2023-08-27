@@ -25,7 +25,7 @@ jobs:
       - name: Run JUnit Tests
         run: mvn test
 
-  build-docker-image:
+  build-podman-image:
     runs-on: ubuntu-latest
     needs: build
 
@@ -33,22 +33,25 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: Set up Docker
-        uses: docker/setup-buildx-action@v1
+      - name: Install Podman
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y podman
+        # You might need to adjust the installation command based on your Linux distribution.
 
-      - name: Build Docker Image
-        run: docker build -t java-app .
+      - name: Build Podman Image
+        run: podman build -t java-app .
 
   scan-security-vulnerabilities:
     runs-on: ubuntu-latest
-    needs: build-docker-image
+    needs: build-podman-image
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: Scan Docker image 🐳
+      - name: Scan Podman image 🐳
         uses: snyk/actions/docker@master
         continue-on-error: true
         with:
-              image: docker.io/library/java-app
+          image: java-app
