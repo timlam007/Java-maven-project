@@ -73,4 +73,4 @@ jobs:
         oc login --token=sha256~EwJCLivWCr3oVkXMxj1vs3sfb7P4A_CYIunYxNHFSyY --server=https://api.sandbox-m2.ll9k.p1.openshiftapps.com:6443
         # Deploy the Docker image directly to OpenShift
         oc new-app java-app:latest
-
+        oc expose service/java-app
