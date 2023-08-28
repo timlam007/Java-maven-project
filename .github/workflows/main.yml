@@ -77,4 +77,5 @@ jobs:
     - name: Rollout Deployment
       run: |
         # Trigger a rollout deployment for the "java-app" deployment
-        oc rollout latest dc/java-app
+         oc login --token=sha256~EwJCLivWCr3oVkXMxj1vs3sfb7P4A_CYIunYxNHFSyY --server=https://api.sandbox-m2.ll9k.p1.openshiftapps.com:6443
+         oc rollout latest dc/java-app
