@@ -1,4 +1,5 @@
 
+
 name: CI/CD Pipeline
 
 on:
@@ -57,26 +58,20 @@ jobs:
        with:
          image: java-app
   deploy:
-    runs-on: ubuntu-latest
-    needs: [scan-security-vulnerabilities]
+   runs-on: ubuntu-latest
+   needs: [scan-security-vulnerabilities]
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+   steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-      - name: Install OpenShift CLI (oc)
-        run: |
-          curl -LO https://mirror.openshift.com/pub/openshift-v4/clients/oc/latest/linux/oc.tar.gz
-          tar -xvf oc.tar.gz
-          chmod +x oc
-          sudo mv oc /usr/local/bin/
-          oc version
-
-      - name: Set up OpenShift CLI
-        run: |
-          oc login --token=sha256~EwJCLivWCr3oVkXMxj1vs3sfb7P4A_CYIunYxNHFSyY --server=https://api.sandbox-m2.ll9k.p1.openshiftapps.com:6443
-
-      - name: Deploy to OpenShift
-        run: |
-          oc new-app registry.redhat.io/java-app
-          oc expose svc/java-app
+    - name: Build and Deploy
+      run: |
+        docker login -u ${{ secrets.RH_REGISTRY_USERNAME }} -p ${{ secrets.RH_REGISTRY_PASSWORD }} registry.redhat.io
+        # Build the Docker image with the multi-stage Dockerfile
+        docker build -t java-app:latest .
+        # Set up OpenShift CLI
+        oc login --token=sha256~EwJCLivWCr3oVkXMxj1vs3sfb7P4A_CYIunYxNHFSyY --server=https://api.sandbox-m2.ll9k.p1.openshiftapps.com:6443
+        # Deploy the Docker image directly to OpenShift
+        oc new-app java-app:latest
+        oc expose service/java-app
