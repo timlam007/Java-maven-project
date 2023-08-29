@@ -25,7 +25,6 @@ jobs:
 
       - name: Run JUnit Tests
         run: mvn test
-
   build-container:
     runs-on: ubuntu-latest
     needs: build
@@ -42,7 +41,6 @@ jobs:
 
       - name: Build Docker Image
         run: docker build -t java-app .
-
   scan-security-vulnerabilities:
    runs-on: ubuntu-latest
    needs: build-container
@@ -55,7 +53,7 @@ jobs:
        uses: snyk/actions/docker@master
        continue-on-error: true
        with:
-         image: java-app
+        image: java-app
   deploy:
     runs-on: ubuntu-latest
     needs: [scan-security-vulnerabilities]
@@ -79,9 +77,9 @@ jobs:
     
       - name: Apply OpenShift Manifests
         run: |
-         oc apply -f deploymentconfig.yaml
-         oc apply -f service.yaml
-         oc apply -f route.yaml 
+           pwd
+           cd k8s
+           oc apply -f .
 
       - name: Rollout Deployment
         run: oc rollout latest dc/java-app-deployment
