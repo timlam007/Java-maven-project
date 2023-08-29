@@ -34,7 +34,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: Set up Docker
+      - name: Set up podman
         uses: docker/setup-buildx-action@v1
 
       - name: Login to Red Hat Registry
@@ -51,7 +51,7 @@ jobs:
      - name: Checkout Repository
        uses: actions/checkout@v2
 
-     - name: Scan Docker image 🐳
+     - name: Scan podman image 🐳
        uses: snyk/actions/docker@master
        continue-on-error: true
        with:
@@ -76,7 +76,12 @@ jobs:
         run: |
           oc login --token=sha256~EwJCLivWCr3oVkXMxj1vs3sfb7P4A_CYIunYxNHFSyY --server=https://api.sandbox-m2.ll9k.p1.openshiftapps.com:6443
 
-      - name: Deploy to OpenShift
+    
+      - name: Apply OpenShift Manifests
         run: |
-          oc new-app registry.redhat.io/java-app
-          oc expose svc/java-app
+         oc apply -f deploymentconfig.yaml
+         oc apply -f service.yaml
+         oc apply -f route.yaml 
+
+      - name: Rollout Deployment
+        run: oc rollout latest dc/java-app-deployment
