@@ -71,8 +71,7 @@ jobs:
 
       - name: Set up OpenShift CLI
         run: |
-          oc login --token=sha256~EwJCLivWCr3oVkXMxj1vs3sfb7P4A_CYIunYxNHFSyY --server=https://api.sandbox-m2.ll9k.p1.openshiftapps.com:6443
-
+            oc login --token=sha256~zl9MWyXBCxZpz0zgEymD7dUBJ4mZ-hSZgX-LZrgheGA --server=https://api.sandbox-m2.ll9k.p1.openshiftapps.com:6443
       - name: Apply OpenShift Manifests
         run: |
           oc apply -f deploymentconfig.yaml
