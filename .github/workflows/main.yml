@@ -1,5 +1,3 @@
-
-
 name: CI/CD Pipeline
 
 on:
@@ -45,26 +43,24 @@ jobs:
         run: docker build -t java-app .
 
   scan-security-vulnerabilities:
-   runs-on: ubuntu-latest
-   needs: build-container
+    runs-on: ubuntu-latest
+    needs: build-container
 
-   steps:
-     - name: Checkout Repository
-       uses: actions/checkout@v2
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
 
+      - name: Scan Podman image 🐳
+        uses: snyk/actions/docker@master
+        continue-on-error: true
+        with:
+          image: java-app
 
-     - name: Scan podman image 🐳
-
-     - name: Scan Podman image 🐳
-
-       uses: snyk/actions/docker@master
-       continue-on-error: true
-       with:
-         image: java-app
   deploy:
-   runs-on: ubuntu-latest
-   needs: [scan-security-vulnerabilities]
+    runs-on: ubuntu-latest
+    needs: [scan-security-vulnerabilities]
 
+    steps:
       - name: Install OpenShift CLI (oc)
         run: |
           curl -LO https://mirror.openshift.com/pub/openshift-v4/clients/oc/latest/linux/oc.tar.gz
@@ -77,28 +73,14 @@ jobs:
         run: |
           oc login --token=sha256~EwJCLivWCr3oVkXMxj1vs3sfb7P4A_CYIunYxNHFSyY --server=https://api.sandbox-m2.ll9k.p1.openshiftapps.com:6443
 
-    
       - name: Apply OpenShift Manifests
         run: |
-         oc apply -f deploymentconfig.yaml
-         oc apply -f service.yaml
-         oc apply -f route.yaml 
+          oc apply -f deploymentconfig.yaml
+          oc apply -f service.yaml
+          oc apply -f route.yaml 
 
       - name: Rollout Deployment
         run: oc rollout latest dc/java-app-deployment
 
-   steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Build and Deploy
-      run: |
-        docker login -u ${{ secrets.RH_REGISTRY_USERNAME }} -p ${{ secrets.RH_REGISTRY_PASSWORD }} registry.redhat.io
-        # Build the Docker image with the multi-stage Dockerfile
-        docker build -t java-app:latest .
-        # Set up OpenShift CLI
-        oc login --token=sha256~EwJCLivWCr3oVkXMxj1vs3sfb7P4A_CYIunYxNHFSyY --server=https://api.sandbox-m2.ll9k.p1.openshiftapps.com:6443
-        # Deploy the Docker image directly to OpenShift
-        oc new-app java-app:latest
-        oc expose service/java-app
-
+      - name: Expose Service
+        run: oc expose service/java-app
