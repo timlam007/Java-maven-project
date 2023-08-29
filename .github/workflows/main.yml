@@ -1,4 +1,5 @@
 
+
 name: CI/CD Pipeline
 
 on:
@@ -40,7 +41,7 @@ jobs:
       - name: Login to Red Hat Registry
         run: docker login -u ${{ secrets.RH_REGISTRY_USERNAME }} -p ${{ secrets.RH_REGISTRY_PASSWORD }} registry.redhat.io
 
-      - name: Build Docker Image
+      - name: Build Podman Image
         run: docker build -t java-app .
 
   scan-security-vulnerabilities:
@@ -51,18 +52,18 @@ jobs:
      - name: Checkout Repository
        uses: actions/checkout@v2
 
+
      - name: Scan podman image 🐳
+
+     - name: Scan Podman image 🐳
+
        uses: snyk/actions/docker@master
        continue-on-error: true
        with:
          image: java-app
   deploy:
-    runs-on: ubuntu-latest
-    needs: [scan-security-vulnerabilities]
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+   runs-on: ubuntu-latest
+   needs: [scan-security-vulnerabilities]
 
       - name: Install OpenShift CLI (oc)
         run: |
@@ -85,3 +86,19 @@ jobs:
 
       - name: Rollout Deployment
         run: oc rollout latest dc/java-app-deployment
+
+   steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Build and Deploy
+      run: |
+        docker login -u ${{ secrets.RH_REGISTRY_USERNAME }} -p ${{ secrets.RH_REGISTRY_PASSWORD }} registry.redhat.io
+        # Build the Docker image with the multi-stage Dockerfile
+        docker build -t java-app:latest .
+        # Set up OpenShift CLI
+        oc login --token=sha256~EwJCLivWCr3oVkXMxj1vs3sfb7P4A_CYIunYxNHFSyY --server=https://api.sandbox-m2.ll9k.p1.openshiftapps.com:6443
+        # Deploy the Docker image directly to OpenShift
+        oc new-app java-app:latest
+        oc expose service/java-app
+
