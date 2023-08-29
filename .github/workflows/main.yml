@@ -74,7 +74,7 @@ jobs:
             oc login --token=sha256~zl9MWyXBCxZpz0zgEymD7dUBJ4mZ-hSZgX-LZrgheGA --server=https://api.sandbox-m2.ll9k.p1.openshiftapps.com:6443
       - name: Apply OpenShift Manifests
         run: |
-          cd /home/runner/work/Java-maven-project/Java-maven-project/k8s
+          cd /home/runner/work/Java-maven-project/k8s
           oc apply -f .
           
 
