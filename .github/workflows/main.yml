@@ -81,4 +81,8 @@ jobs:
         run: oc rollout latest dc/java-app-deployment
 
       - name: Expose Service
+
         run: oc expose service/java-app
+
+        run: oc expose service/java-app
+
