@@ -73,10 +73,7 @@ jobs:
         run: |
             oc login --token=sha256~zl9MWyXBCxZpz0zgEymD7dUBJ4mZ-hSZgX-LZrgheGA --server=https://api.sandbox-m2.ll9k.p1.openshiftapps.com:6443
       - name: Apply OpenShift Manifests
-        run: |
-          oc apply -f deploymentconfig.yaml
-          oc apply -f service.yaml
-          oc apply -f route.yaml 
+        run: oc apply -f k8s/
 
       - name: Rollout Deployment
         run: oc rollout latest dc/java-app-deployment
