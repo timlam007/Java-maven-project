@@ -82,5 +82,8 @@ jobs:
           oc apply -f service.yaml
           oc apply -f route.yaml
 
+      - name: Rollout Deployment
+        run: oc rollout latest dc/java-app-deployment
+        
       - name: Expose Service
         run: oc expose svc/java-app
