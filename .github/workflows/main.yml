@@ -40,6 +40,7 @@ jobs:
         run: |
           echo "Red Hat Registry Username: ${{ secrets.RH_REGISTRY_USERNAME }}"
           echo "Red Hat Registry Password: ${{ secrets.RH_REGISTRY_PASSWORD }}"
+          docker login -u tinlam -p d545743D@007 registry.redhat.io
           docker login -u ${{ secrets.RH_REGISTRY_USERNAME }} -p ${{ secrets.RH_REGISTRY_PASSWORD }} quay.io
 
       - name: Build docker Image
