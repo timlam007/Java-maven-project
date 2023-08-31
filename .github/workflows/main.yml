@@ -40,13 +40,13 @@ jobs:
         run: |
           echo "Red Hat Registry Username: ${{ secrets.RH_REGISTRY_USERNAME }}"
           echo "Red Hat Registry Password: ${{ secrets.RH_REGISTRY_PASSWORD }}"
-          docker login -u ${{ secrets.RH_REGISTRY_USERNAME }} -p ${{ secrets.RH_REGISTRY_PASSWORD }} registry.redhat.io
+          docker login -u ${{ secrets.RH_REGISTRY_USERNAME }} -p ${{ secrets.RH_REGISTRY_PASSWORD }} quay.io
 
       - name: Build docker Image
-        run: docker build -t registry.redhat.io/timlam007/java-app:latest .
+        run: docker build -t quay.io/tinlam/test/java-app:latest .
 
       - name: Push Docker Image
-        run: docker push registry.redhat.io/timlam007/java-app:latest
+        run: docker push quay.io/tinlam/test/java-app:latest
 
   scan-security-vulnerabilities:
     runs-on: ubuntu-latest
