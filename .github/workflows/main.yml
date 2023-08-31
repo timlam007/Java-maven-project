@@ -43,10 +43,10 @@ jobs:
           docker login -u ${{ secrets.RH_REGISTRY_USERNAME }} -p ${{ secrets.RH_REGISTRY_PASSWORD }} registry.redhat.io
 
       - name: Build docker Image
-        run: docker build -t registry.redhat.io/java-app:latest .
+        run: docker build -t registry.redhat.io/timlam007/java-app:latest .
 
       - name: Push Docker Image
-        run: docker push registry.redhat.io/java-app:latest
+        run: docker push registry.redhat.io/timlam007/java-app:latest
 
   scan-security-vulnerabilities:
     runs-on: ubuntu-latest
