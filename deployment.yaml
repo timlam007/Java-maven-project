@@ -1,16 +1,21 @@
 apiVersion: apps.openshift.io/v1
 kind: DeploymentConfig
 metadata:
-  name: java-app-deployment
+  name:  java-app-deployment
 spec:
   replicas: 1
+  selector:
+    app: java-app
   template:
     metadata:
       labels:
         app: java-app
     spec:
+      serviceAccountName: my-app-serviceaccount
       containers:
-      - name: java-app-container
-        image: image-registry.openshift-image-registry.svc:5000/tinlam-dev/test/java-app:latest
-        ports:
-        - containerPort: 8080
+        - name: my-app-container
+          image: quay.io/tinlam/test/java-app
+          ports:
+            - containerPort: 8080
+      imagePullSecrets:
+        - name: quay-io-secret
