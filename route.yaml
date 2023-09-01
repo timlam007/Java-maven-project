@@ -2,9 +2,16 @@ apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
   name: java-app-route
+  namespace: tinlam-dev
 spec:
+  host: java-app-route-tinlam-dev.apps.sandbox-m2.ll9k.p1.openshiftapps.com
   to:
     kind: Service
     name: java-app-service
   port:
-    targetPort: 80
+    targetPort: 8080
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None
+    
