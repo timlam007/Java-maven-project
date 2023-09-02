@@ -19,6 +19,11 @@ jobs:
           df -h
           pwd
           date
+          apt-get -y update 
+          apt-get install -y sudo
+          sudo apt-get install -y unzip
+          sudo apt-get install -y wget
+          sudo apt-get -y update 
           
       - name: Checkout Repository
         uses: actions/checkout@v3
@@ -28,6 +33,12 @@ jobs:
         with:
           java-version: "11"
           distribution: "adopt"
+
+      - name: Download SonarScanner
+        run: |
+          wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472-linux.zip
+          unzip sonar-scanner-cli-4.6.2.2472-linux.zip
+          sudo mv sonar-scanner-4.6.2.2472-linux /opt/sonar-scanner
 
       - name: Build Maven Project
         run: mvn clean install
