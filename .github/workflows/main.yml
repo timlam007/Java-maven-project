@@ -20,12 +20,6 @@ jobs:
           pwd
           date
 
-      - name: Download SonarScanner
-        run: |
-          wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472-linux.zip
-          unzip sonar-scanner-cli-4.6.2.2472-linux.zip
-          sudo mv sonar-scanner-4.6.2.2472-linux /opt/sonar-scanner
-          
       - name: Checkout Repository
         uses: actions/checkout@v3
 
@@ -46,6 +40,14 @@ jobs:
 
       - name: Run JUnit Tests
         run: mvn test
+
+      - name: Run SonarQube Analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONARQUBE_URL }}
+        run: |
+          export PATH=$PATH:/opt/sonar-scanner/bin
+          sonar-scanner -Dsonar.projectKey=timlam007_Java-maven-project -Dsonar.sources=. -Dsonar.host.url=${{ secrets.SONARQUBE_URL }} -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
 
   build-container:
     runs-on: ubuntu-latest
