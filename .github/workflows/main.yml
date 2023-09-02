@@ -47,7 +47,7 @@ jobs:
           SONAR_HOST_URL: ${{ secrets.SONARQUBE_URL }}
         run: |
           export PATH=$PATH:/opt/sonar-scanner/bin
-          sonar-scanner -Dsonar.projectKey=timlam007_Java-maven-project -Dsonar.sources=. -Dsonar.host.url=${{ secrets.SONARQUBE_URL }} -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
+          sonar-scanner -Dsonar.projectKey=timlam007_Java-maven-project -Dsonar.organization=timlam007 -Dsonar.sources=. -Dsonar.host.url=${{ secrets.SONARQUBE_URL }} -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
 
   build-container:
     runs-on: ubuntu-latest
