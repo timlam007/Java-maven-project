@@ -18,4 +18,5 @@ spec:
           ports:
             - containerPort: 8080
       imagePullSecrets:
-        - name: quay-io-secret
+        - name: tim-secret
+        
