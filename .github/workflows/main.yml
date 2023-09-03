@@ -1,5 +1,6 @@
 name: CI/CD Pipeline with mainPodman
 
+
 on:
   push:
     branches:
@@ -7,15 +8,20 @@ on:
 
 jobs:
   check-environment:
-    strategy:
-      matrix:
-        include:
-          - file: '01-check-environment.yml'
-
     runs-on: ubuntu-latest
+
     steps:
-      - name: Check Environment
-        uses: ./.github/workflows/01-check-environment.yml
+      - name: Check Ubuntu Virtual Environment Provided by GitHub Action
+        run: |
+          lsb_release -a
+          ip addr
+          free -m
+          lscpu
+          df -h
+          pwd
+          date
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
   build:
     strategy:
