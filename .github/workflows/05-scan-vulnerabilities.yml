@@ -1,0 +1,26 @@
+name: Scan Security Vulnerabilities
+
+on:
+  workflow_run:
+    workflows: ["CI/CD Pipeline with Podman"]
+    types:
+      - completed
+
+jobs:
+  scan-security-vulnerabilities:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        
+      - name: Echo masked SNYK_TOKEN
+        run: echo "***${{ secrets.SNYK_TOKEN }}***"
+        
+      - name: Scan Podman image 🐳
+        uses: snyk/actions/docker@master
+        continue-on-error: true
+        env:
+            SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          image: quay.io/tinlam/test/java-app:latest
