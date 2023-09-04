@@ -19,6 +19,7 @@ jobs:
           lscpu
           df -h
           pwd
+          date
           
 
       - name: Checkout Repository
