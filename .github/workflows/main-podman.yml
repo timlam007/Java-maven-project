@@ -117,8 +117,7 @@ jobs:
 
       - name: Set up OpenShift CLI
         run: |
-         
-        oc login --token=sha256~9Yf6A-Ksn0UqfIU64-WdrdSzkj2rFSdympYf_Vfgzfo --server=https://api.sandbox-m2.ll9k.p1.openshiftapps.com:6443
+         oc login --token=sha256~9Yf6A-Ksn0UqfIU64-WdrdSzkj2rFSdympYf_Vfgzfo --server=https://api.sandbox-m2.ll9k.p1.openshiftapps.com:6443
          oc whoami
          
       - name: Apply OpenShift Manifests
