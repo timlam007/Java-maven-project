@@ -7,8 +7,7 @@ on:
       - QA
 
 jobs:
-  extract_branch_name:
-    name: Get Branch name
+  extract-branch-name:
     runs-on: ubuntu-latest
     outputs:
       branch_name: ${{steps.branch_name.outputs.BRANCH_NAME}}
@@ -30,8 +29,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     environment: 
-      name: ${{ needs.extract_branch_name.outputs.BRANCH_NAME }}
-    needs: extract_branch_name
+      name: ${{ needs.extract-branch-name.outputs.BRANCH_NAME }}
+    needs: [extract-branch-name]
     steps:
       - name: Check Ubuntu Virtual Environment Provided by GitHub Action
         run: |
