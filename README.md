@@ -60,7 +60,7 @@ The workflow is organized into several jobs, each handling a specific part of th
     Commit and push your changes to the **QA** branch.
 
 5.  **Pull Request**
-    Create a Pull request from **QA** to **PROD**
+    Create a Pull request from **QA** to **PROD**. Once pull request is merged code will automatically run and deploy to **PROD**.
 
 ## Usage
 
