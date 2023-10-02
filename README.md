@@ -59,6 +59,9 @@ The workflow is organized into several jobs, each handling a specific part of th
 4.  **Commit and Push**
     Commit and push your changes to the **QA** branch.
 
+5.  **Pull Request**
+    Create Pull request from **QA** to **PROD**
+
 ## Usage
 
 Once you have set up your repository, any push to the **main** branch will trigger the CI/CD workflow. You can view the progress in the **Actions** tab of your GitHub repository.
