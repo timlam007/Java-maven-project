@@ -8,23 +8,27 @@ on:
 
 jobs:
   extract_branch_name:
+    name: Get Branch name
     runs-on: ubuntu-latest
     steps:
-      - name: Get Branch Name
-        id: branch-name
-        run: |
-          # Extract the branch name from the ref
-          BRANCH_NAME=$(echo "${{ github.ref }}" | awk -F'/' '{print $3}')
-          echo "::set-output name=branch_name::$BRANCH_NAME"
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      - name: Use Branch Name
+      - name: Extract Branch Name
+        id: branch_name
         run: |
-          # Get the branch name from the previous step's output
-          BRANCH_NAME="${{ steps.branch-name.outputs.branch_name }}"
-          echo "Branch Name: $BRANCH_NAME"
+          # Get the current branch reference (e.g., refs/heads/PROD)
+          BRANCH_REF=$(git symbolic-ref --short HEAD)
+
+          # Extract the branch name
+          BRANCH_NAME=$(echo "$BRANCH_REF" | cut -d'/' -f3)
+
+          # Set the branch name as an output variable
+          echo "::set-output name=stage_name::$BRANCH_NAME"
   build:
     runs-on: ubuntu-latest
-    environment: ${{ needs.extract_branch_name.outputs.branch_name }}
+    environment: 
+      name: ${{ needs.extract_branch_name.outputs.stage_name }}
     needs: extract_branch_name
     steps:
       - name: Check Ubuntu Virtual Environment Provided by GitHub Action
