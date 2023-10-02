@@ -65,87 +65,89 @@ jobs:
       - name: Run JUnit Tests
         run: mvn test
 
-      # - name: Run SonarQube Analysis
-      #   env:
-      #     SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
-      #     SONAR_HOST_URL: ${{ secrets.SONARQUBE_URL }}
-      #   run: |
-      #     export PATH=$PATH:/opt/sonar-scanner/bin
-      #     sonar-scanner -Dsonar.projectKey=timlam007_Java-maven-project -Dsonar.java.binaries=target/classes -Dsonar.organization=timlam007 -Dsonar.sources=src -Dsonar.host.url=${{ secrets.SONARQUBE_URL }} -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
+      - name: Run SonarQube Analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONARQUBE_URL }}
+        run: |
+          export PATH=$PATH:/opt/sonar-scanner/bin
+          sonar-scanner -Dsonar.projectKey=timlam007_Java-maven-project -Dsonar.java.binaries=target/classes -Dsonar.organization=timlam007 -Dsonar.sources=src -Dsonar.host.url=${{ secrets.SONARQUBE_URL }} -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
 
-  # build-container:
-  #   runs-on: ubuntu-latest
-  #   needs: build
-  #   environment: ${{ github.ref }}
+  build-container:
+    runs-on: ubuntu-latest
+    needs: build
+    environment: 
+      name: ${{ needs.extract_branch_name.outputs.BRANCH_NAME }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
-  #   steps:
-  #     - name: Checkout Repository
-  #       uses: actions/checkout@v3
+      - name: Install Podman
+        run: |
+          . /etc/os-release
+          echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/ /" | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
+          curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/Release.key | sudo apt-key add -
+          sudo apt-get update
+          sudo apt-get -y install podman
 
-  #     - name: Install Podman
-  #       run: |
-  #         . /etc/os-release
-  #         echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/ /" | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
-  #         curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/Release.key | sudo apt-key add -
-  #         sudo apt-get update
-  #         sudo apt-get -y install podman
+      - name: Login to Red Hat Registry
+        run: |
+          echo "Red Hat Registry Username: ${{ secrets.RH_REGISTRY_USERNAME }}"
+          echo "Red Hat Registry Password: ${{ secrets.RH_REGISTRY_PASSWORD }}"
+          podman login -u tinlam -p d545743D@007 registry.redhat.io
+          podman login -u ${{ secrets.RH_REGISTRY_USERNAME }} -p ${{ secrets.RH_REGISTRY_PASSWORD }} quay.io
 
-  #     - name: Login to Red Hat Registry
-  #       run: |
-  #         echo "Red Hat Registry Username: ${{ secrets.RH_REGISTRY_USERNAME }}"
-  #         echo "Red Hat Registry Password: ${{ secrets.RH_REGISTRY_PASSWORD }}"
-  #         podman login -u tinlam -p d545743D@007 registry.redhat.io
-  #         podman login -u ${{ secrets.RH_REGISTRY_USERNAME }} -p ${{ secrets.RH_REGISTRY_PASSWORD }} quay.io
+      - name: Build Podman Image
+        run: podman build -t quay.io/tinlam/test/java-app:latest .
 
-  #     - name: Build Podman Image
-  #       run: podman build -t quay.io/tinlam/test/java-app:latest .
+      - name: Push Podman Image
+        run: podman push quay.io/tinlam/test/java-app:latest
 
-  #     - name: Push Podman Image
-  #       run: podman push quay.io/tinlam/test/java-app:latest
-
-  # scan-security-vulnerabilities:
-  #   runs-on: ubuntu-latest
-  #   needs: build-container
-  #   environment: ${{ github.ref }}
-  #   steps:
-  #     - name: Checkout Repository
-  #       uses: actions/checkout@v3
+  scan-security-vulnerabilities:
+    runs-on: ubuntu-latest
+    needs: build-container
+    environment: 
+      name: ${{ needs.extract_branch_name.outputs.BRANCH_NAME }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
         
-  #     - name: Echo masked SNYK_TOKEN
-  #       run: echo "***${{ secrets.SNYK_TOKEN }}***"
+      - name: Echo masked SNYK_TOKEN
+        run: echo "***${{ secrets.SNYK_TOKEN }}***"
         
-  #     - name: Scan Podman image 🐳
-  #       uses: snyk/actions/docker@master
-  #       continue-on-error: true
-  #       env:
-  #           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-  #       with:
-  #         image: quay.io/tinlam/test/java-app:latest
+      - name: Scan Podman image 🐳
+        uses: snyk/actions/docker@master
+        continue-on-error: true
+        env:
+            SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          image: quay.io/tinlam/test/java-app:latest
 
-  # deploy:
-  #   runs-on: ubuntu-latest
-  #   needs: [scan-security-vulnerabilities]
-  #   environment: ${{ github.ref }}
-  #   steps:
-  #     - name: Checkout Repository
-  #       uses: actions/checkout@v3
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [scan-security-vulnerabilities]
+    environment: 
+      name: ${{ needs.extract_branch_name.outputs.BRANCH_NAME }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
-  #     - name: Install OpenShift CLI (oc)
-  #       run: |
-  #         curl -LO https://mirror.openshift.com/pub/openshift-v4/clients/oc/latest/linux/oc.tar.gz
-  #         tar -xvf oc.tar.gz
-  #         chmod +x oc
-  #         sudo mv oc /usr/local/bin/
-  #         oc version
+      - name: Install OpenShift CLI (oc)
+        run: |
+          curl -LO https://mirror.openshift.com/pub/openshift-v4/clients/oc/latest/linux/oc.tar.gz
+          tar -xvf oc.tar.gz
+          chmod +x oc
+          sudo mv oc /usr/local/bin/
+          oc version
 
-  #     - name: Set up OpenShift CLI
-  #       run: |
-  #        oc login --token=sha256~9Yf6A-Ksn0UqfIU64-WdrdSzkj2rFSdympYf_Vfgzfo --server=https://api.sandbox-m2.ll9k.p1.openshiftapps.com:6443
-  #        oc whoami
+      - name: Set up OpenShift CLI
+        run: |
+         oc login --token=sha256~9Yf6A-Ksn0UqfIU64-WdrdSzkj2rFSdympYf_Vfgzfo --server=https://api.sandbox-m2.ll9k.p1.openshiftapps.com:6443
+         oc whoami
          
-  #     - name: Apply OpenShift Manifests
-  #       run: |
-  #         oc apply -f deployment.yaml
-  #         oc apply -f service.yaml
-  #         oc apply -f route.yaml
+      - name: Apply OpenShift Manifests
+        run: |
+          oc apply -f deployment.yaml
+          oc apply -f service.yaml
+          oc apply -f route.yaml
 
