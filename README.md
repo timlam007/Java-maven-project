@@ -26,7 +26,7 @@
 This repository contains a sample CI/CD pipeline using GitHub Actions for a Java Maven project. The pipeline includes steps for building the project, running tests, performing static code analysis with SonarQube, building a container image using Podman, scanning the image for vulnerabilities with Snyk, and deploying the application to OpenShift Sandbox
 
 The workflow is organized into several jobs, each handling a specific part of the continuous integration and deployment process:
-
+1.  **Extract-Branch-Name**: This job is responsible for extracting the branch name from the current Git branch reference and setting it as an output variable (branch_name) to be used in other jobs.
 1.  **Build**: This job compiles the Java application, runs unit tests, and performs static code analysis using SonarQube.
 2.  **Build-container**: This job builds a Podman container image of the application and pushes the image to the Quay.io container registry.
 3.  **Scan-security-vulnerabilities**: This job scans the Podman container image for security vulnerabilities using Snyk.
@@ -46,13 +46,18 @@ The workflow is organized into several jobs, each handling a specific part of th
     Fork this repository to your own GitHub account.
 
 2.  **Set up Secrets**
-    Navigate to the **Settings** tab of your GitHub repository, then click on **Secrets** in the left sidebar. Add the following secrets: - **SONARQUBE_TOKEN**: Your SonarQube token. - **RH_REGISTRY_USERNAME**: Your Red Hat registry username. - **RH_REGISTRY_PASSWORD**: Your Red Hat registry password. - **SNYK_TOKEN**: Your Snyk token.
+    Navigate to the **Settings** tab of your GitHub repository, then click on **Environments** in the left sidebar. then select Environments. Add the following secrets:
+- **SONARQUBE_URL**: Your SonarQube URL. 
+- **SONARQUBE_TOKEN**: Your SonarQube token. 
+- **RH_REGISTRY_USERNAME**: Your Red Hat registry username. 
+- **RH_REGISTRY_PASSWORD**: Your Red Hat registry password. 
+- **SNYK_TOKEN**: Your Snyk token.
 
 3.  **Modify the Workflow File**
     Modify the **.github/workflows/main.yml** file to suit your needs. For example, you may need to change the OpenShift server URL, project name, or image name.
 
 4.  **Commit and Push**
-    Commit and push your changes to the **main** branch.
+    Commit and push your changes to the **PROD**/**QA** branch.
 
 ## Usage
 
@@ -65,8 +70,10 @@ Once you have set up your repository, any push to the **main** branch will trigg
     oc create secret docker-registry tim-secret --docker-server=quay.io  --docker-username="XXXX"  --docker-password="XXXXXXXX"
 
 ## Detailed Workflow Steps
+1. **Extract Branch Name**
+   This step is responsible for extracting the branch name from the current Git branch reference and setting it as an output variable (branch_name) to be used in other jobs. 
 
-1.  **Check Ubuntu Virtual Environment**
+2.  **Check Ubuntu Virtual Environment**
     This step prints the details of the GitHub Actions runner environment. It will print the Linux distribution details, IP address, memory, CPU, disk usage, current working directory, and date and time.
 
 2.  **Checkout Repository**
