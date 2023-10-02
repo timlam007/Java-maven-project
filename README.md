@@ -57,7 +57,7 @@ The workflow is organized into several jobs, each handling a specific part of th
     Modify the **.github/workflows/main.yml** file to suit your needs. For example, you may need to change the OpenShift server URL, project name, or image name.
 
 4.  **Commit and Push**
-    Commit and push your changes to the **PROD**/**QA** branch.
+    Commit and push your changes to the **QA** branch.
 
 ## Usage
 
