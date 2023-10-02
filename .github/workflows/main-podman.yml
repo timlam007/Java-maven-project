@@ -10,9 +10,11 @@ jobs:
   extract_branch_name:
     name: Get Branch name
     runs-on: ubuntu-latest
+    outputs:
+      branch_name: ${{steps.branch_name.outputs.BRANCH_NAME}}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Extract Branch Name
         id: branch_name
@@ -24,11 +26,11 @@ jobs:
           BRANCH_NAME=$(echo "$BRANCH_REF" | cut -d'/' -f3)
 
           # Set the branch name as an output variable
-          echo "::set-output name=stage_name::$BRANCH_NAME"
+          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_OUTPUT
   build:
     runs-on: ubuntu-latest
     environment: 
-      name: ${{ needs.extract_branch_name.outputs.stage_name }}
+      name: ${{ needs.extract_branch_name.outputs.BRANCH_NAME }}
     needs: extract_branch_name
     steps:
       - name: Check Ubuntu Virtual Environment Provided by GitHub Action
