@@ -7,10 +7,25 @@ on:
       - QA
 
 jobs:
+  extract_branch_name:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get Branch Name
+        id: branch-name
+        run: |
+          # Extract the branch name from the ref
+          BRANCH_NAME=$(echo "${{ github.ref }}" | awk -F'/' '{print $3}')
+          echo "::set-output name=branch_name::$BRANCH_NAME"
+
+      - name: Use Branch Name
+        run: |
+          # Get the branch name from the previous step's output
+          BRANCH_NAME="${{ steps.branch-name.outputs.branch_name }}"
+          echo "Branch Name: $BRANCH_NAME"
   build:
     runs-on: ubuntu-latest
-    environment: ${{ github.ref }}
-   
+    environment: ${{ needs.extract_branch_name.outputs.branch_name }}
+    needs: extract_branch_name
     steps:
       - name: Check Ubuntu Virtual Environment Provided by GitHub Action
         run: |
