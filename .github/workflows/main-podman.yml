@@ -139,8 +139,11 @@ jobs:
           oc version
 
       - name: Set up OpenShift CLI
+        env:
+          OPENSHIFT_TOKEN: ${{ secrets.OPENSHIFT_TOKEN }}
+          OPENSHIFT_URL: ${{ secrets.OPENSHIFT_URL }}
         run: |
-         oc login --token=${{ secrets.OPENSHIFT_TOKEN }} --server=${{ secrets.OPENSHIFT_URL }}
+         oc login --token=$OPENSHIFT_TOKEN --server=$OPENSHIFT_URL
          oc whoami
          
       - name: Apply OpenShift Manifests
