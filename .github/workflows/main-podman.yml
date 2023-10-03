@@ -141,7 +141,7 @@ jobs:
 
       - name: Set up OpenShift CLI
         run: |
-         ${{ secrets.OPENSHIFT_URL }}
+         oc ${{ secrets.OPENSHIFT_URL }}
          oc whoami
          
       - name: Apply OpenShift Manifests
