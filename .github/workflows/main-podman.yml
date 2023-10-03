@@ -142,7 +142,7 @@ jobs:
         env: 
           BRANCH_NAME: ${{ needs.extract-branch-name.outputs.branch_name }} 
         run: |
-         if [ $BRANCH_NAME == 'PROD' ]; then
+         if [[ "$BRANCH_NAME" == 'PROD' ]]; then
            oc login --token=sha256~0yZYV21O3vt8tNrg7AODd-Ay1JD-e160EhL6he7eL4I --server=https://api.sandbox-m3.1530.p1.openshiftapps.com:6443
          else
            oc login --token=sha256~6CmTQIyZ1NMJH4u1ZA2Vxjvf3xUZDBwFh059WY5kcTc --server=https://api.sandbox-m2.ll9k.p1.openshiftapps.com:6443
