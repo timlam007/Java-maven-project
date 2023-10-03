@@ -72,6 +72,7 @@ jobs:
           df -h
           pwd
           date
+          echo ${{ needs.extract-branch-name.outputs.branch_name }}
           
       - name: Checkout Repository
         uses: actions/checkout@v3
