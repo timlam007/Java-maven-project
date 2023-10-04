@@ -26,6 +26,7 @@ jobs:
 
           # Set the branch name as an output variable
           echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_OUTPUT
+
   build:
     runs-on: ubuntu-latest
     environment: 
@@ -169,6 +170,11 @@ jobs:
         run: |
          oc login --token=${{ secrets.OPENSHIFT_TOKEN }} --server=${{ secrets.OPENSHIFT_URL }}
          oc whoami
+         
+      - name: Update Manifest
+        run: |
+          # Use sed to update the value in the manifest
+          sed -i "s|tinlam-dev|${{ vars.NAMESPACE }}|g" route.yaml
          
       - name: Apply OpenShift Manifests
         run: |
