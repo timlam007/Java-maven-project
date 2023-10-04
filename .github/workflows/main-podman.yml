@@ -173,15 +173,8 @@ jobs:
          
       - name: Update Manifest
         run: |
-          # Load the Kubernetes manifest into a variable
-          MANIFEST=$(cat route.yaml)
-  
           # Use sed to update the value in the manifest
-          NEW_VALUE="${{ vars.NAMESPACE }}"
-          sed -i "s|tinlam-dev|$NEW_VALUE|g" <<< "$MANIFEST"
-  
-          # Write the updated manifest back to the file
-          echo "$MANIFEST" > route.yaml
+          sed -i "s|tinlam-dev|${{ vars.NAMESPACE }}|g" route.yaml
          
       - name: Apply OpenShift Manifests
         run: |
