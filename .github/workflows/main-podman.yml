@@ -174,8 +174,8 @@ jobs:
       - name: Update Manifest
         run: |
           # Use sed to update the value in the manifest
-          echo "NAMESPACE= ${{vars.NAMESPACE}"
-          echo "OPENSHIFT_HOST= ${{vars.OPENSHIFT_HOST}"
+          echo "NAMESPACE= ${{vars.NAMESPACE}}"
+          echo "OPENSHIFT_HOST= ${{vars.OPENSHIFT_HOST}}"
           sed -i "s|\K_NAMESPACE|${{vars.NAMESPACE}}|g" route.yaml
           sed -i "s|\K_OPENSHIFT_HOST|${{vars.OPENSHIFT_HOST}}|g" route.yaml
          
