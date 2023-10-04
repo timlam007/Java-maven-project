@@ -174,8 +174,8 @@ jobs:
       - name: Update Manifest
         run: |
           # Use sed to update the value in the manifest
-          sed -i "s|$NAMESPACE|${{ vars.NAMESPACE }}|g" route.yaml
-          sed -i "s|$OPENSHIFT_HOST|${{ vars.OPENSHIFT_HOST }}|g" route.yaml
+          sed -i "s|\$NAMESPACE|${{ vars.NAMESPACE }}|g" route.yaml
+          sed -i "s|\$OPENSHIFT_HOST|${{ vars.OPENSHIFT_HOST }}|g" route.yaml
          
       - name: Apply OpenShift Manifests
         run: |
