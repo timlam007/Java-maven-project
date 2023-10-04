@@ -2,9 +2,9 @@ apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
   name: java-app-route
-  namespace: tinlam-dev
+  namespace: ${NAMESPACE}
 spec:
-  host: java-app-route-tinlam-dev.apps.sandbox-m2.ll9k.p1.openshiftapps.com
+  host: ${OPENSHIFT_HOST}
   to:
     kind: Service
     name: java-app-service
