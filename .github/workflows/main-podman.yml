@@ -26,12 +26,14 @@ jobs:
 
           # Set the branch name as an output variable
           echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_OUTPUT
+
   build:
     runs-on: ubuntu-latest
     environment: 
       name: ${{ needs.extract-branch-name.outputs.branch_name }}
     needs: [extract-branch-name]
     steps:
+      - run: echo ${{ vars.NAMESPACE }}
       - name: Check Ubuntu Virtual Environment Provided by GitHub Action
         run: |
           lsb_release -a
@@ -169,6 +171,18 @@ jobs:
         run: |
          oc login --token=${{ secrets.OPENSHIFT_TOKEN }} --server=${{ secrets.OPENSHIFT_URL }}
          oc whoami
+         
+      - name: Update Manifest
+        run: |
+          # Load the Kubernetes manifest into a variable
+          MANIFEST=$(cat route.yaml)
+  
+          # Use sed to update the value in the manifest
+          NEW_VALUE="${{ vars.NAMESPACE }}"
+          sed -i "s|tinlam-dev|$NEW_VALUE|g" <<< "$MANIFEST"
+  
+          # Write the updated manifest back to the file
+          echo "$MANIFEST" > route.yaml
          
       - name: Apply OpenShift Manifests
         run: |
